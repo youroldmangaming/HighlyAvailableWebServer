@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  web:
+    image: nginx:latest
+    deploy:
+      replicas: 4
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+    networks:
+      - host_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  haproxy-master:
+    image: haproxy:latest
+    configs:
+      - source: haproxy_config
+        target: /usr/local/etc/haproxy/haproxy.cfg
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == rpi1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - host_network
+
+  haproxy-backup:
+    image: haproxy:latest
+    configs:
+      - source: haproxy_config
+        target: /usr/local/etc/haproxy/haproxy.cfg
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == rpi2
+      restart_policy:
+        condition: on-failure
+    networks:
+      - host_network
+
+  keepalived-master:
+    image: y0mg/keepalived # ENSURE THIS IMAGE IS BUILT FROM YOUR DOCKERFILE
+    cap_add:
+      - NET_ADMIN
+    configs:
+      - source: keepalived_master_config
+        target: /etc/keepalived/keepalived.conf
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == rpi1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - host_network
+    privileged: true
+
+  keepalived-backup:
+    image: y0mg/keepalived # ENSURE THIS IMAGE IS BUILT FROM YOUR DOCKERFILE 
+    cap_add:
+      - NET_ADMIN
+    configs:
+      - source: keepalived_backup_config
+        target: /etc/keepalived/keepalived.conf
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == rpi2
+      restart_policy:
+        condition: on-failure
+    networks:
+      - host_network
+    privileged: true
+
+networks:
+  host_network:
+    external: true
+    name: host
+
+configs:
+  haproxy_config:
+    file: ./haproxy.cfg
+  keepalived_master_config:
+    file: ./keepalived-master.conf
+  keepalived_backup_config:
+    file: ./keepalived-backup.conf
