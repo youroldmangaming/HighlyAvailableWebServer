@@ -3,6 +3,8 @@ version: '3.8'
 services:
   web:
     image: nginx:latest
+    volumes:
+      - bigbird:/usr/share/nginx/html
     deploy:
       replicas: 4
       restart_policy:
@@ -81,6 +83,18 @@ services:
     networks:
       - host_network
     privileged: true
+
+
+volumes:
+  bigbird:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=mini,rw,hard,nointr,rsize=8192,wsize=8192,vers=4 # Replace with your NFS server IP and desired options
+      device: ":/mnt/bigbird/nginx/data" # Path on your NFS server
+
+
+
 
 networks:
   host_network:
