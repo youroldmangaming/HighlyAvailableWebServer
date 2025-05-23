@@ -47,3 +47,6 @@ This entire architecture is deployed and managed with Docker Swarm.
     ```
 
 This command will deploy all the defined services (Keepalived, HAProxy, Nginx) as a Docker Swarm stack named `ha-stack`, orchestrating their deployment and management across your cluster.
+
+Use the following to build the Keepalived image for yourself if required
+git clone https://github.com/youroldmangaming/y0mg-keepalived.git 
