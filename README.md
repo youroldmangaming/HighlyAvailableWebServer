@@ -29,7 +29,7 @@ We have two HAProxy instances, one on `rpi1` and another on `rpi2`. These instan
 
 Every node in our Docker Swarm hosts an Nginx instance. Nginx is a powerful, high-performance web server that can handle many concurrent connections. This distributed setup makes our web serving layer scalable and resilient to individual node failures.
 
-### NFS for Centralized Content
+### NFS for Centralised Content
 
 To keep content consistent and simplify management across all Nginx instances, we use an **NFS share**. Each Nginx container is set up to mount this share, giving all web servers access to the same centralized content repository. This eliminates the need to deploy content to each node separately and streamlines any content updates.
 
