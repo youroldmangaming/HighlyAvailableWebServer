@@ -5,6 +5,7 @@ To deploy run
               docker stack deploy -c docker-compose.yml ha-stack
 
               root@rpi1:/home/rpi/cluster/ha-swarm/bin# docker service ls
+              
 ID             NAME                         MODE         REPLICAS   IMAGE                    PORTS
 l34k02mac7kq   ha-stack_haproxy-backup      replicated   1/1        haproxy:latest           
 4hstqyuiefhh   ha-stack_haproxy-master      replicated   1/1        haproxy:latest           
